@@ -4,6 +4,7 @@
 // init project
 require('dotenv').config();
 const express = require('express');
+const requestIp = require('request-ip');
 
 const app = express();
 
@@ -13,6 +14,12 @@ const app = express();
 const cors = require('cors');
 app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 204
 
+// inside middleware handler
+const ipMiddleware = function(req, res, next) {
+  const clientIp = requestIp.getClientIp(req); 
+  next();
+};
+app.use(requestIp.mw());
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -29,7 +36,7 @@ app.get('/api/hello', function (req, res) {
 
 app.get('/api/whoami', (req, res) => {
   return res.json({
-    ipaddress: req.connection.remoteAddress,
+    ipaddress: req.clientIp,
     language : req.headers["accept-language"],
     software : req.headers["user-agent"]
   }); 
