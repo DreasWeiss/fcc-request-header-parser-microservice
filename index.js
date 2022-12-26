@@ -4,7 +4,6 @@
 // init project
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -14,8 +13,6 @@ const app = express();
 const cors = require('cors');
 app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 204
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -31,14 +28,11 @@ app.get('/api/hello', function (req, res) {
 });
 
 app.get('/api/whoami', (req, res) => {
-  // let header = JSON.stringify(req.headers);
-  let header = req.headers;
-  let taskInfo = {
-    "ipaddress": header.referer,
-    "language" : header["accept-language"],
-    "software" : header["user-agent"]
-  };
-  return res.end(JSON.stringify(taskInfo)); 
+  return res.json({
+    ipaddress: req.headers["x-forwarded-for"],
+    language : req.headers["accept-language"],
+    software : req.headers["user-agent"]
+  }); 
 });
 
 // listen for requests :)
