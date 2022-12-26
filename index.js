@@ -29,7 +29,7 @@ app.get('/api/hello', function (req, res) {
 
 app.get('/api/whoami', (req, res) => {
   return res.json({
-    ipaddress: req.headers["x-forwarded-for"],
+    ipaddress: req.connection.remoteAddress,
     language : req.headers["accept-language"],
     software : req.headers["user-agent"]
   }); 
